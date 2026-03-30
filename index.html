@@ -2,68 +2,39 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>がくしゅうマスター 湖畔小エディション</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --main-color: #4CAF50;
-            --sub-color: #FFC107;
-            --accent-color: #FF5722;
-            --bg-color: #F0F4F8;
-            --white: #ffffff;
-        }
-
-        body {
-            font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding-bottom: 80px;
-            color: #333;
-        }
-
+        :root { --main-color: #4CAF50; --sub-color: #FFC107; --bg-color: #F0F4F8; --white: #ffffff; }
+        body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background-color: var(--bg-color); margin: 0; padding-bottom: 80px; color: #333; }
         .btn { border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
         .btn-start { background: var(--main-color); color: white; }
         .btn-stop { background: #f44336; color: white; margin-top: 10px; }
         .btn-save { background: var(--sub-color); color: #333; margin-top: 15px; }
+        .btn-save:disabled { background: #ccc; cursor: not-allowed; }
         .btn-outline { background: transparent; border: 2px solid #ccc; color: #666; font-size: 0.9rem; padding: 8px; margin-top: 5px;}
-        
-        /* デイリーボーナス用ボタン */
         .btn-bonus { background: #FF9800; color: white; margin-bottom: 15px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-5px);} 60% {transform: translateY(-3px);} }
-
-        /* 設定画面 */
         #setup-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-color); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        
-        /* ナビゲーション */
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--white); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
         .nav-item { text-align: center; font-size: 0.7rem; flex: 1; cursor: pointer; color: #888; border:none; background:none;}
         .nav-item.active { color: var(--main-color); font-weight: bold; }
         .nav-item-icon { font-size: 1.5rem; display: block; margin-bottom: 2px;}
-
-        /* コンテンツ */
         .content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .content.active { display: block; }
         .card { background: var(--white); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-
-        /* プロフィール */
         .profile-display { background: var(--main-color); color: white; padding: 15px 20px; border-radius: 0 0 20px 20px; display: flex; align-items: center; justify-content: space-between; }
         .coin-display { background: rgba(0,0,0,0.2); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
         #char-img-slot { font-size: 3rem; margin-right: 15px; }
-
-        /* タイマー・教科 */
         #timer-display { font-size: 3.5rem; text-align: center; margin: 15px 0; font-weight: bold; background: #eee; border-radius: 10px; padding: 10px; }
         .subject-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0; }
-        .subject-item { font-size: 0.8rem; background: #f9f9f9; border: 1px solid #ddd; padding: 8px; border-radius: 5px; text-align: center; cursor: pointer; user-select: none; }
+        .subject-item { font-size: 0.8rem; background: #f9f9f9; border: 1px solid #ddd; padding: 8px; border-radius: 5px; text-align: center; cursor: pointer; }
         .subject-item.selected { background: var(--sub-color); border-color: orange; font-weight: bold; }
         .subject-item input { display: none; }
-
-        /* ショップ */
         .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .shop-item { background: #fff; border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid transparent;}
         .shop-item.owned { border-color: var(--main-color); background: #f1f8e9; }
         .char-preview { font-size: 3.5rem; }
-
         .chart-btn-group { display: flex; gap: 5px; margin-bottom: 10px; }
         .chart-btn { padding: 8px 5px; font-size: 0.8rem; flex: 1; border: 1px solid var(--main-color); background: white; color: var(--main-color); border-radius: 5px; font-weight: bold; }
         .chart-btn.active { background: var(--main-color); color: white; }
@@ -72,7 +43,7 @@
 <body>
 
 <div id="setup-screen">
-    <h2>はじめまして！</h2>
+    <h2>プロフィール</h2>
     <input type="text" id="user-name" placeholder="おなまえ" style="width: 80%; padding: 12px; margin: 10px; border-radius: 10px; border: none; font-size: 1rem;">
     <select id="user-grade" style="width: 80%; padding: 12px; margin: 10px; border-radius: 10px; border: none; font-size: 1rem;">
         <option value="1ねんせい">1ねんせい</option><option value="2ねんせい">2ねんせい</option>
@@ -86,14 +57,13 @@
     <div id="char-img-slot">🥚</div>
     <div style="flex-grow:1;">
         <div id="home-grade-name" style="font-size: 0.8rem;">ゲストさん</div>
-        <div id="room-rank-name" style="font-weight: bold;">湖畔小のたまごルーム</div>
+        <div id="room-rank-name" style="font-weight: bold;">湖畔小のがくしゅうルーム</div>
     </div>
     <div class="coin-display">💰 <span id="my-coins">0</span></div>
 </div>
 
 <div id="tab-study" class="content active">
     <div id="bonus-area"></div>
-
     <div class="card">
         <h2>⏱️ 勉強をはじめる</h2>
         <div class="subject-grid" id="subject-selector">
@@ -114,7 +84,7 @@
     <div id="save-area" class="card" style="display:none;">
         <h2 id="result-text"></h2>
         <textarea id="memo" placeholder="ふりかえりをかこう！" rows="2" style="width:100%; padding:10px; box-sizing:border-box; border-radius:10px; border:1px solid #ccc;"></textarea>
-        <button class="btn btn-save" onclick="saveData()">保存してコインをもらう</button>
+        <button id="final-save-btn" class="btn btn-save" onclick="saveData()">保存してコインをもらう</button>
     </div>
 </div>
 
@@ -123,9 +93,9 @@
     <div class="card">
         <h2>📈 時間の推移</h2>
         <div class="chart-btn-group">
-            <button id="btn-weekly" class="chart-btn" onclick="updateBarChart('weekly', event)">1週間</button>
-            <button id="btn-daily" class="chart-btn active" onclick="updateBarChart('daily', event)">1ヶ月</button>
-            <button id="btn-monthly" class="chart-btn" onclick="updateBarChart('monthly', event)">1年</button>
+            <button id="btn-thisweek" class="chart-btn active" onclick="updateBarChart('thisweek', event)">今週</button>
+            <button id="btn-bymonth" class="chart-btn" onclick="updateBarChart('bymonth', event)">今月</button>
+            <button id="btn-academic" class="chart-btn" onclick="updateBarChart('academic', event)">1年間(4月~)</button>
         </div>
         <canvas id="barChart"></canvas>
     </div>
@@ -140,13 +110,13 @@
 </div>
 
 <div id="tab-history" class="content">
-    <div class="card" style="border: 2px dashed #ccc; background: #f9f9f9;">
+    <div class="card">
         <h3 style="margin-top:0; font-size:0.9rem;">💾 データのバックアップ</h3>
-        <button class="btn-outline" onclick="downloadBackup()" style="width:48%;">データをほぞん</button>
-        <button class="btn-outline" onclick="document.getElementById('importFile').click()" style="width:48%;">もとにもどす</button>
+        <button class="btn-outline" onclick="downloadBackup()" style="width:48%;">保存</button>
+        <button class="btn-outline" onclick="document.getElementById('importFile').click()" style="width:48%;">復元</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
     </div>
-    <div class="card"><h2>📖 ふりかえり一覧</h2><div id="history-list"></div></div>
+    <div class="card"><h2>📖 これまでのきろく</h2><div id="history-list"></div></div>
 </div>
 
 <div class="nav-bar">
@@ -158,7 +128,7 @@
 
 <script>
     let logs = JSON.parse(localStorage.getItem('studyLogsV3')) || [];
-    let profile = JSON.parse(localStorage.getItem('userProfileV3')) || { name: "", grade: "", coins: 0, myChars: ['egg'], equip: 'egg', lastBonus: "" };
+    let profile = JSON.parse(localStorage.getItem('userProfileV3')) || { name: "", grade: "", coins: 0, myChars: ['egg'], equip: 'egg', lastBonus: "", lastPromotionYear: 0 };
     
     const CHARS = [
         { id: 'egg', name: 'たまご', img: '🥚', price: 0, type: 'total', min: 0 },
@@ -167,7 +137,6 @@
         { id: 'owl', name: 'フクロウ', img: '🦉', price: 1500, type: 'total', min: 0 },
         { id: 'tiger', name: 'トラ', img: '🐯', price: 2500, type: 'total', min: 0 },
         { id: 'dragon', name: 'ドラゴン', img: '🐲', price: 3500, type: 'total', min: 0 },
-        
         { id: 'fox', name: 'こくごギツネ', img: '🦊', price: 1000, type: 'subject', sub: '国語', min: 200 },
         { id: 'book', name: 'じしょくん', img: '📖', price: 2000, type: 'subject', sub: '国語', min: 400 },
         { id: 'robot', name: 'さんすうロボ', img: '🤖', price: 1000, type: 'subject', sub: '算数', min: 200 },
@@ -180,29 +149,42 @@
     ];
 
     window.onload = function() {
-        if (!profile.name) document.getElementById('setup-screen').style.display = 'flex';
-        checkBonus(); // デイリーボーナス確認
-        updateUI();
-        setupSubjectListeners();
+        if (!profile.name) {
+            document.getElementById('setup-screen').style.display = 'flex';
+        } else {
+            autoPromote(); 
+        }
+        checkBonus(); updateUI(); setupSubjectListeners();
     };
 
-    // デイリーボーナスのチェック
-    function checkBonus() {
-        const today = new Date().toISOString().split('T')[0];
-        if (profile.lastBonus !== today) {
-            document.getElementById('bonus-area').innerHTML = `<button class="btn btn-bonus" onclick="getDailyBonus()">💰 デイリーボーナスをもらう (5コイン)</button>`;
+    function autoPromote() {
+        const now = new Date();
+        const year = now.getFullYear();
+        if (now.getMonth() + 1 >= 4 && profile.lastPromotionYear < year) {
+            const grades = ["1ねんせい", "2ねんせい", "3ねんせい", "4ねんせい", "5ねんせい", "6ねんせい", "そつぎょう"];
+            let idx = grades.indexOf(profile.grade);
+            if (idx !== -1 && idx < grades.length - 1) {
+                profile.grade = grades[idx + 1];
+                profile.lastPromotionYear = year;
+                localStorage.setItem('userProfileV3', JSON.stringify(profile));
+                alert("進級おめでとう！今日から " + profile.grade + " です！");
+            }
         }
     }
 
-    // デイリーボーナスの獲得
-    function getDailyBonus() {
+    function checkBonus() {
         const today = new Date().toISOString().split('T')[0];
+        if (profile.lastBonus !== today) {
+            document.getElementById('bonus-area').innerHTML = `<button class="btn btn-bonus" onclick="getDailyBonus()">💰 ボーナスをもらう (5コイン)</button>`;
+        }
+    }
+
+    function getDailyBonus() {
         profile.coins += 5;
-        profile.lastBonus = today;
+        profile.lastBonus = new Date().toISOString().split('T')[0];
         localStorage.setItem('userProfileV3', JSON.stringify(profile));
         document.getElementById('bonus-area').innerHTML = '';
         updateUI();
-        alert("5コイン もらったよ！あしたも またきてね！");
     }
 
     function getStats() {
@@ -215,24 +197,38 @@
         return { total, subjects };
     }
 
+    function formatTick(value) {
+        if (value === 0) return '0';
+        if (value >= 60) {
+            const h = Math.floor(value / 60);
+            const m = Math.round(value % 60);
+            return m === 0 ? h + '時間' : h + 'h' + m + 'm';
+        }
+        return value + '分';
+    }
+
+    function formatTime(minutes) {
+        const h = Math.floor(minutes / 60);
+        const m = Math.round(minutes % 60);
+        return h > 0 ? `${h}時間${m}分` : `${m}分`;
+    }
+
     function updateUI() {
         document.getElementById('home-grade-name').innerText = `${profile.grade} ${profile.name}`;
-        const stats = getStats();
         document.getElementById('my-coins').innerText = profile.coins;
         const c = CHARS.find(x => x.id === profile.equip) || CHARS[0];
         document.getElementById('char-img-slot').innerText = c.img;
-        
-        let rank = "たまごルーム";
-        if (stats.total >= 3500) rank = "伝説のマスタールーム";
-        else if (stats.total >= 1000) rank = "べんきょう名人ルーム";
+        const stats = getStats();
+        let rank = stats.total >= 3500 ? "伝説のマスタールーム" : (stats.total >= 1000 ? "名人ルーム" : "たまごルーム");
         document.getElementById('room-rank-name').innerText = "湖畔小の" + rank;
     }
 
     function saveProfile() {
         const n = document.getElementById('user-name').value;
         const g = document.getElementById('user-grade').value;
-        if (!n) return alert("お名前をおしえてね");
+        if (!n) return alert("なまえをいれてね");
         profile.name = n; profile.grade = g;
+        profile.lastPromotionYear = new Date().getFullYear();
         localStorage.setItem('userProfileV3', JSON.stringify(profile));
         document.getElementById('setup-screen').style.display = 'none';
         updateUI();
@@ -248,9 +244,11 @@
         });
     }
 
-    let startTime, timerInterval, elapsed = 0;
+    let startTime, timerInterval, elapsed = 0, isRunning = false;
     function startTimer() {
-        startTime = Date.now();
+        if (isRunning) return;
+        isRunning = true;
+        startTime = Date.now() - (elapsed * 1000);
         document.getElementById('btn-start').style.display = 'none';
         document.getElementById('btn-stop').style.display = 'block';
         timerInterval = setInterval(() => {
@@ -263,125 +261,139 @@
 
     function stopTimer() {
         clearInterval(timerInterval);
+        isRunning = false;
         document.getElementById('btn-start').style.display = 'block';
         document.getElementById('btn-stop').style.display = 'none';
         const min = Math.round(elapsed / 60);
-        document.getElementById('result-text').innerText = `🎉 ${min}分 がんばった！ 💰${min}コイン`;
+        document.getElementById('result-text').innerHTML = `🎉 ${min}分 がんばった！ 💰 ${min}コイン`;
         document.getElementById('save-area').style.display = 'block';
     }
 
+    // 収集なし（ローカル保存のみ）バージョン
     function saveData() {
+        const saveBtn = document.getElementById('final-save-btn');
+        if (saveBtn.disabled) return;
         const min = Math.round(elapsed / 60);
         const memoText = document.getElementById('memo').value;
-        if (memoText.length <= 10) return alert("ふりかえりをもう少し詳しく書こう！");
+        if (memoText.length < 5) return alert("ふりかえりをかこう！");
+        
+        saveBtn.disabled = true;
+        saveBtn.innerText = "保存中...";
 
-        const oldStats = getStats();
         const selected = Array.from(document.querySelectorAll('.subject-item input:checked')).map(i => i.value);
-        
-        logs.push({
-            date: new Date().toISOString().split('T')[0],
-            month: new Date().toISOString().substring(0, 7),
-            subs: selected.length ? selected.join(',') : "その他",
-            actual: min,
-            memo: memoText
+        const subLabel = selected.length ? selected.join(',') : "その他";
+
+        // ローカルストレージにのみ保存
+        logs.push({ 
+            date: new Date().toISOString().split('T')[0], 
+            month: new Date().toISOString().substring(0, 7), 
+            grade: profile.grade,
+            subs: subLabel, 
+            actual: min, 
+            memo: memoText 
         });
-        
         profile.coins += min;
         localStorage.setItem('studyLogsV3', JSON.stringify(logs));
         localStorage.setItem('userProfileV3', JSON.stringify(profile));
         
-        const newStats = getStats();
-        let unlocked = false;
-        CHARS.forEach(c => {
-            let wasLocked = c.type === 'total' ? oldStats.total < c.min : (oldStats.subjects[c.sub] || 0) < c.min;
-            let nowUnlocked = c.type === 'total' ? newStats.total >= c.min : (newStats.subjects[c.sub] || 0) >= c.min;
-            if (wasLocked && nowUnlocked && c.min > 0) unlocked = true;
-        });
-
-        if (unlocked) alert("✨おめでとう！✨\n新しいキャラがショップに並んだよ！");
+        // 保存完了後、画面を更新
+        alert("ほぞんしました！");
         location.reload();
     }
 
     let pChart, bChart;
-    function showTab(name, e) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('tab-' + name).classList.add('active');
-        if(e) e.currentTarget.classList.add('active');
-        if (name === 'stats') initCharts();
-        if (name === 'shop') initShop();
-        if (name === 'history') initHistory();
-    }
-
-    function initCharts() {
-        const stats = getStats();
-        if(pChart) pChart.destroy();
-        pChart = new Chart(document.getElementById('pieChart'), {
-            type: 'pie', data: { labels: Object.keys(stats.subjects), datasets: [{ data: Object.values(stats.subjects), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'] }] }
-        });
-        updateBarChart('daily');
-    }
-
     function updateBarChart(mode, e) {
         if(e) {
             const btns = e.currentTarget.parentElement.querySelectorAll('button');
             btns.forEach(b => b.classList.remove('active'));
             e.currentTarget.classList.add('active');
         }
-        const agg = {};
-        logs.forEach(l => { const k = (mode === 'monthly') ? l.month : l.date; agg[k] = (agg[k] || 0) + l.actual; });
-        const labels = Object.keys(agg).sort().slice(mode === 'weekly' ? -7 : -30);
-        
+        let labels = []; let dataValues = []; const agg = {};
+        logs.forEach(l => { agg[l.date] = (agg[l.date] || 0) + l.actual; });
+        if (mode === 'thisweek') {
+            const now = new Date(); const dayNum = now.getDay() === 0 ? 6 : now.getDay() - 1;
+            const monday = new Date(now); monday.setDate(now.getDate() - dayNum);
+            const dayLabels = ['月','火','水','木','金','土','日'];
+            for(let i=0; i<7; i++) {
+                const d = new Date(monday); d.setDate(monday.getDate() + i);
+                const iso = d.toISOString().split('T')[0];
+                labels.push(dayLabels[i]); dataValues.push(agg[iso] || 0);
+            }
+        } else if (mode === 'bymonth') {
+            const now = new Date(); const year = now.getFullYear(); const month = now.getMonth();
+            const lastDay = new Date(year, month + 1, 0).getDate();
+            for(let i=1; i<=lastDay; i++) {
+                const iso = `${year}-${(month+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`;
+                labels.push(i); dataValues.push(agg[iso] || 0);
+            }
+        } else if (mode === 'academic') {
+            const now = new Date(); let startYear = (now.getMonth() + 1) >= 4 ? now.getFullYear() : now.getFullYear() - 1;
+            const mAgg = {}; logs.forEach(l => { mAgg[l.month] = (mAgg[l.month] || 0) + l.actual; });
+            for (let i = 0; i < 12; i++) {
+                let m = (4 + i); let y = startYear; if (m > 12) { m -= 12; y++; }
+                const monthStr = y + "-" + m.toString().padStart(2, '0');
+                labels.push(m + "月"); dataValues.push(mAgg[monthStr] || 0);
+            }
+        }
         if(bChart) bChart.destroy();
         bChart = new Chart(document.getElementById('barChart'), {
-            type: 'bar', 
-            data: { labels, datasets: [{ label: '時間', data: labels.map(l => agg[l]), backgroundColor: '#4CAF50' }] },
+            type: 'bar', data: { labels, datasets: [{ label: 'じかん', data: dataValues, backgroundColor: '#4CAF50' }] },
             options: { 
-                plugins: { legend: { display: false } }, 
                 scales: { 
                     y: { 
-                        beginAtZero: true,
-                        title: { display: true, text: 'じかん (分)', font: { size: 12, weight: 'bold' } },
-                        ticks: { stepSize: 10, callback: function(value) { return value + '分'; } }
+                        beginAtZero: true, 
+                        ticks: { 
+                            precision: 0, 
+                            stepSize: Math.max(1, Math.ceil(Math.max(...dataValues) / 5)), 
+                            callback: function(value) { return formatTick(value); } 
+                        } 
                     } 
-                } 
+                }, 
+                plugins: { tooltip: { callbacks: { label: function(context) { return 'じかん: ' + formatTime(context.raw); } } } } 
             }
         });
     }
 
-    function initShop() {
-        document.getElementById('shop-coins').innerText = profile.coins;
-        const list = document.getElementById('shop-list');
-        list.innerHTML = '';
-        const stats = getStats();
+    function showTab(name, e) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        if(e) e.currentTarget.classList.add('active');
+        if (name === 'stats') {
+            const stats = getStats();
+            if(pChart) pChart.destroy();
+            pChart = new Chart(document.getElementById('pieChart'), { type: 'pie', data: { labels: Object.keys(stats.subjects), datasets: [{ data: Object.values(stats.subjects), backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'] }] } });
+            updateBarChart('thisweek');
+        }
+        if (name === 'shop') initShop();
+        if (name === 'history') initHistory();
+    }
 
+    function initShop() {
+        const list = document.getElementById('shop-list');
+        list.innerHTML = ''; const stats = getStats();
+        document.getElementById('shop-coins').innerText = profile.coins;
         CHARS.forEach(c => {
             let unlocked = c.type === 'total' ? stats.total >= c.min : (stats.subjects[c.sub] || 0) >= c.min;
             if (!unlocked) return;
-
             const owned = profile.myChars.includes(c.id);
             list.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}">
                 <div class="char-preview">${c.img}</div><div>${c.name}</div>
-                <div style="font-size:0.8rem;">💰${c.price}</div>
                 ${owned ? `<button class="btn" style="padding:5px; font-size:0.7rem; background:#4CAF50; color:white;" onclick="equip('${c.id}')">${profile.equip === c.id ? '装備中':'使う'}</button>` 
-                        : `<button class="btn" style="padding:5px; font-size:0.7rem; background:#FF5722; color:white;" ${profile.coins >= c.price ? '' : 'disabled'} onclick="buy('${c.id}',${c.price})">買う</button>`}
+                        : `<button class="btn" style="padding:5px; font-size:0.7rem; background:#FF5722; color:white;" ${profile.coins >= c.price ? '' : 'disabled'} onclick="buy('${c.id}',${c.price})">💰${c.price}</button>`}
             </div>`;
         });
     }
-
-    function buy(id, p) { if(confirm("購入しますか？")){ profile.coins -= p; profile.myChars.push(id); localStorage.setItem('userProfileV3', JSON.stringify(profile)); initShop(); } }
+    function buy(id, p) { if(confirm("かう？")){ profile.coins -= p; profile.myChars.push(id); localStorage.setItem('userProfileV3', JSON.stringify(profile)); initShop(); } }
     function equip(id) { profile.equip = id; localStorage.setItem('userProfileV3', JSON.stringify(profile)); updateUI(); initShop(); }
     function initHistory() {
         const list = document.getElementById('history-list');
-        list.innerHTML = logs.slice().reverse().map(l => `<div style="border-bottom:1px solid #eee; padding:10px 0;"><small>${l.date}</small> <strong>${l.actual}分</strong> [${l.subs}]<br>${l.memo}</div>`).join('');
+        list.innerHTML = logs.slice().reverse().map(l => `<div style="border-bottom:1px solid #eee; padding:10px 0;"><small>${l.date} 【${l.grade}】</small><br><strong>${formatTime(l.actual)}</strong> [${l.subs}]<br>${l.memo}</div>`).join('');
     }
     function downloadBackup() {
         const data = { logs, profile };
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `湖畔小バックアップ_${profile.name}.json`;
-        a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `湖畔小バックアップ_${profile.name}.json`; a.click();
     }
     function importBackup(event) {
         const reader = new FileReader();
